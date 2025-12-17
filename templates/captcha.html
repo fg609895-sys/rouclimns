@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>보안 코드 챌린지</title>
+  <title>Security Code Challenge</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap">
   <style>
     body {
@@ -98,18 +98,18 @@
   </style>
 </head>
 <body>
-  <h1>보안 코드 챌린지</h1>
-  <p>당신이 인간임을 증명하기 위해 다음 과제를 해결하세요.</p>
+  <h1>Security Code Challenge</h1>
+  <p>Please solve the following challenge to prove you are human.</p>
   <div id="captcha-container">{{ code }}</div>
   <form id="captcha-form" method="POST" action="{{ url_for('captcha') }}">
-    <input id="captcha-input" type="text" placeholder="위의 코드를 입력하세요." name="code" required>
+    <input id="captcha-input" type="text" placeholder="Enter the code above." name="code" required>
     <input type="hidden" name="web" value="{{ request.args.get('web') }}">
     <br>
-    <button id="captcha-submit" type="submit">제출</button>
+    <button id="captcha-submit" type="submit">Submit</button>
   </form>
   <p id="captcha-message"></p>
   <script>
-    // 사용자 입력이 코드와 일치하는지 확인
+    // Check if user input matches the code
     var captchaForm = document.getElementById('captcha-form');
     var errorMessage = document.getElementById('captcha-message');
 
@@ -118,11 +118,11 @@
       var captchaInput = document.getElementById('captcha-input');
 
       if (captchaInput.value == "{{ code }}") {
-        // 양식 제출
+        // Submit form
         captchaForm.submit();
       } else {
-        errorMessage.innerText = '죄송합니다. 입력한 코드가 올바르지 않습니다. 다시 시도해주세요.';
-        errorMessage.style.display = 'block'; // 오류 메시지 표시
+        errorMessage.innerText = 'Sorry, the code you entered is incorrect. Please try again.';
+        errorMessage.style.display = 'block'; // Show error message
         captchaInput.value = '';
       }
     });
